@@ -55,11 +55,14 @@ jobs:
 
       # 8️⃣ 배포용 env 파일 생성
       - name: Create env file for docker-compose
-        run: |
-          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" > .env
+        run:
+          echo "DB_NAME=${{ secrets.DB_NAME }}" > .env
+          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
           echo "GITHUB_REPOSITORY=${{ github.repository }}" >> .env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
 
+      
       # 9️⃣ Docker Compose로 서비스 배포
       - name: Deploy with Docker Compose
         run: |
