@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      IMAGE_NAME: ghcr.io/${{ github.repository }}/my-app
+      IMAGE_NAME: ${{ github.repository }}/my-app
 
     steps:
       - name: Checkout
@@ -63,7 +63,7 @@ jobs:
         run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
 
       - name: Build Docker image
-        run: docker build -t myapp:$SHORT_SHA .
+        run: docker build -t $IMAGE_NAME:$SHORT_SHA .
 
       - name: Push Docker image
         run: docker push $IMAGE_NAME:$SHORT_SHA
