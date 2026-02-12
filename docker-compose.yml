@@ -16,7 +16,7 @@ services:
 
 
   app:
-    image: ghcr.io/${GITHUB_REPOSITORY}/my-app:${IMAGE_TAG}
+    image: ghcr.io/${GITHUB_REPOSITORY}/my-app:${IMAGE_TAG:-latest}
     container_name: grape-server
     depends_on:
       db:
