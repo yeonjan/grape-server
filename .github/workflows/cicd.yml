@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      IMAGE_NAME: ${{ github.repository }}/my-app
+      IMAGE_NAME: ghcr.io/${{ github.repository }}/my-app
 
     steps:
       - name: Checkout
