@@ -79,6 +79,8 @@ jobs:
       
       # 예: SSH로 서버 배포
       - name: Deploy via SSH
+        env:
+          SHORT_SHA: ${{ env.SHORT_SHA }}
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.SERVER_IP }}
@@ -86,8 +88,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd /home/deploy
-            export IMAGE_TAG=${GITHUB_SHA::7} 
-
+            export IMAGE_TAG= $SHORT_SHA
             docker compose pull
             docker compose up -d --remove-orphans
  
