@@ -86,7 +86,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd /home/deploy
-            export IMAGE_TAG=$SHORT_SHA 
+            export IMAGE_TAG=${GITHUB_SHA::7} 
 
             docker compose pull
             docker compose up -d --remove-orphans
