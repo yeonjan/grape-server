@@ -42,6 +42,10 @@ public class Grape {
         return Grape.builder().user(user).title(title).targetCount(targetCount).reward(reward).status(GrapeStatus.IN_PROGRESS).build();
     }
 
+    public void assignToUser(User newUser) {
+        this.user = newUser;
+    }
+
     private static void validateTargetCount(int targetCount) {
         if (targetCount != 30 && targetCount != 50 && targetCount != 100) {
             throw new IllegalArgumentException("허용되지 않은 targetCount");

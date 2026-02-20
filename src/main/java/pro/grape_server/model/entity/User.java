@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import pro.grape_server.model.entity.common.BaseEntity;
 import pro.grape_server.model.entity.enums.Provider;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(
         name = "users",
@@ -39,12 +41,18 @@ public class User extends BaseEntity {
     @Column(length = 100)
     private String email;
 
+    private LocalDateTime lastLoginAt;
+
     @Builder(access = AccessLevel.PRIVATE)
     private User(Provider provider, String providerUserId, String name, String email) {
         this.provider = provider;
         this.providerUserId = providerUserId;
         this.name = name;
         this.email = email;
+    }
+
+    public void updateLastLoginAt() {
+        this.lastLoginAt = LocalDateTime.now();
     }
 
     public static User create(Provider provider, String providerUserId, String name, String email) {
@@ -54,5 +62,24 @@ public class User extends BaseEntity {
                 .name(name)
                 .email(email)
                 .build();
+    }
+
+    public static User createGuest(String deviceHash) {
+        return User.builder()
+                .provider(Provider.GUEST)
+                .providerUserId(deviceHash)
+                .name("Guest")
+                .build();
+    }
+
+    public boolean isGuest() {
+        return this.provider == Provider.GUEST;
+    }
+
+    public void convertToSocialAccount(Provider provider, String providerUserId, String name, String email) {
+        this.provider = provider;
+        this.providerUserId = providerUserId;
+        this.name = name;
+        this.email = email;
     }
 }

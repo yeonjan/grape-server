@@ -15,5 +15,5 @@ public interface GrapeRepository extends JpaRepository<Grape, Long> {
 
     Optional<Grape> findByUserIdAndStatus(Long userId, GrapeStatus status);
 
-    Long user(User user);
+    List<Grape> findAllByUser(User user);
 }

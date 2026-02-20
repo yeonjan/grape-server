@@ -9,10 +9,15 @@ import pro.grape_server.domain.auth.repository.UserRepository;
 import pro.grape_server.domain.auth.service.provider.OAuthProvider;
 import pro.grape_server.domain.auth.service.provider.OAuthProviderFactory;
 import pro.grape_server.domain.auth.service.provider.OAuthUserInfo;
+import pro.grape_server.domain.grape.repository.GrapeRepository;
 import pro.grape_server.global.exception.AuthException;
+import pro.grape_server.model.entity.Grape;
 import pro.grape_server.model.entity.RefreshToken;
 import pro.grape_server.model.entity.User;
 import pro.grape_server.model.entity.enums.Provider;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -23,15 +28,48 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final OAuthProviderFactory oAuthProviderFactory;
     private final JwtService jwtService;
+    private final GrapeRepository grapeRepository;
 
-    public LoginResponse login(String providerName, String accessToken) {
+    public LoginResponse guestSignUp(String deviceId) {
+        if (userRepository.findByProviderAndProviderUserId(Provider.GUEST, deviceId).isPresent()) {
+            throw new AuthException("Already registered device");
+        }
+        User user = userRepository.save(User.createGuest(deviceId));
+        return issueTokens(user);
+    }
+
+    public LoginResponse guestLogin(String deviceId) {
+        User user = userRepository.findByProviderAndProviderUserId(Provider.GUEST, deviceId)
+                .orElseThrow(() -> new AuthException("Guest user not found"));
+        return issueTokens(user);
+    }
+
+    public LoginResponse login(String providerName, String accessToken, Long guestUserId) {
         OAuthProvider oAuthProvider = oAuthProviderFactory.getProvider(providerName);
         Provider provider = oAuthProvider.getProviderType();
-
         OAuthUserInfo userInfo = oAuthProvider.getUserInfo(accessToken);
 
-        User user = userRepository.findByProviderAndProviderUserId(provider, userInfo.providerUserId())
-                .orElseGet(() -> createUser(provider, userInfo));
+        Optional<User> existingSocialUser = userRepository.findByProviderAndProviderUserId(provider, userInfo.providerUserId());
+
+        User user;
+        if (guestUserId != null) {
+            User guestUser = userRepository.findById(guestUserId)
+                    .orElseThrow(() -> new AuthException("Guest user not found"));
+
+            if (existingSocialUser.isPresent()) {
+                User socialUser = existingSocialUser.get();
+                migrateGrapes(guestUser, socialUser);
+                refreshTokenRepository.deleteByUser(guestUser);
+                refreshTokenRepository.flush();
+                userRepository.delete(guestUser);
+                user = socialUser;
+            } else {
+                guestUser.convertToSocialAccount(provider, userInfo.providerUserId(), userInfo.name(), userInfo.email());
+                user = guestUser;
+            }
+        } else {
+            user = existingSocialUser.orElseGet(() -> createUser(provider, userInfo));
+        }
 
         return issueTokens(user);
     }
@@ -52,6 +90,13 @@ public class AuthService {
         refreshTokenRepository.delete(storedToken);
 
         return issueTokens(user);
+    }
+
+    private void migrateGrapes(User guestUser, User socialUser) {
+        List<Grape> guestGrapes = grapeRepository.findAllByUser(guestUser);
+        for (Grape grape : guestGrapes) {
+            grape.assignToUser(socialUser);
+        }
     }
 
     private User createUser(Provider provider, OAuthUserInfo userInfo) {
