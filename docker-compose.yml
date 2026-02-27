@@ -4,7 +4,7 @@ services:
     image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:latest
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD", "nc", "-z", "localhost", "5432" ]
+      test: [ "CMD-SHELL", "timeout 1 bash -c 'echo > /dev/tcp/localhost/5432' && echo ok" ]
       interval: 5s
       timeout: 5s
       retries: 5
