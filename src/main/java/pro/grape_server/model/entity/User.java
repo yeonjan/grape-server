@@ -41,6 +41,9 @@ public class User extends BaseEntity {
     @Column(length = 100)
     private String email;
 
+    @Column(length = 50)
+    private String nickname;
+
     private LocalDateTime lastLoginAt;
 
     @Builder(access = AccessLevel.PRIVATE)
