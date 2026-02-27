@@ -1,4 +1,10 @@
 services:
+  cloud-sql-proxy:
+    image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:latest
+    command:
+      - "--address=0.0.0.0"
+      - "--port=5432"
+      - "${INSTANCE_CONNECTION_NAME}"
   app:
     image: ghcr.io/${GITHUB_REPOSITORY}/my-app:${IMAGE_TAG:-latest}
     container_name: grape-server
@@ -10,7 +16,8 @@ services:
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
-
+    depends_on:
+      - cloud-sql-proxy
 
   nginx:
     image: nginx:latest
