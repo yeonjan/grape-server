@@ -1,17 +1,19 @@
 services:
-
   cloud-sql-proxy:
     image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:latest
     restart: unless-stopped
-    healthcheck:
-      test: [ "CMD-SHELL", "timeout 1 bash -c 'echo > /dev/tcp/localhost/5432' && echo ok" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
     command:
       - "--address=0.0.0.0"
       - "--port=5432"
+      - "--health-check"
+      - "--http-address=0.0.0.0"
+      - "--http-port=9090"
       - "${INSTANCE_CONNECTION_NAME}"
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:9090/readiness" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
   app:
     image: ghcr.io/${GITHUB_REPOSITORY}/my-app:${IMAGE_TAG:-latest}
     container_name: grape-server
