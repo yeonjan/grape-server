@@ -10,7 +10,7 @@ services:
       - "--http-port=9090"
       - "${INSTANCE_CONNECTION_NAME}"
     healthcheck:
-      test: [ "CMD", "wget", "-qO-", "http://localhost:9090/readiness" ]
+      test: [ "CMD", "/cloud-sql-proxy", "--version" ]
       interval: 5s
       timeout: 5s
       retries: 5
