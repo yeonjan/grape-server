@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pro.grape_server.domain.grape.repository.RecordRepository;
 import pro.grape_server.domain.grape.repository.GrapeRepository;
+import pro.grape_server.global.exception.BusinessException;
+import pro.grape_server.global.exception.ErrorCode;
 import pro.grape_server.model.entity.Grape;
 import pro.grape_server.model.entity.Record;
 
@@ -20,14 +22,14 @@ public class RecordService {
 
     public Long create(Long userId, Long grapeId, String memo, LocalDate recordDate) {
         Grape grape = grapeRepository.findById(grapeId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포도입니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.GRAPE_NOT_FOUND));
 
         if (!grape.getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("본인의 포도에만 기록을 추가할 수 있습니다.");
+            throw new BusinessException(ErrorCode.RECORD_CREATE_DENIED);
         }
 
         if (recordRepository.existsByGrapeIdAndRecordDate(grapeId, recordDate)) {
-            throw new IllegalStateException("하루에 하나의 포도알만 추가할 수 있습니다.");
+            throw new BusinessException(ErrorCode.RECORD_DUPLICATE);
         }
 
         Record record = Record.create(grape, grape.getUser(), memo, recordDate);
@@ -38,15 +40,15 @@ public class RecordService {
 
     public void update(Long userId, Long recordId, String memo, LocalDate recordDate) {
         Record record = recordRepository.findById(recordId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 기록입니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.RECORD_NOT_FOUND));
 
         if (!record.getGrape().getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("본인의 기록만 수정할 수 있습니다.");
+            throw new BusinessException(ErrorCode.RECORD_UPDATE_DENIED);
         }
 
         if (!record.getRecordDate().equals(recordDate)
                 && recordRepository.existsByGrapeIdAndRecordDate(record.getGrape().getId(), recordDate)) {
-            throw new IllegalStateException("해당 날짜에 이미 기록이 존재합니다.");
+            throw new BusinessException(ErrorCode.RECORD_DUPLICATE);
         }
 
         record.update(memo, recordDate);
@@ -54,10 +56,10 @@ public class RecordService {
 
     public Record get(Long userId, Long recordId) {
         Record record = recordRepository.findById(recordId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 기록입니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.RECORD_NOT_FOUND));
 
         if (!record.getGrape().getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("본인의 기록만 조회할 수 있습니다.");
+            throw new BusinessException(ErrorCode.RECORD_ACCESS_DENIED);
         }
 
         return record;

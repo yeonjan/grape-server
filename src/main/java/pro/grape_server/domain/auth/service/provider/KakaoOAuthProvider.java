@@ -4,7 +4,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
-import pro.grape_server.global.exception.AuthException;
+import pro.grape_server.global.exception.BusinessException;
+import pro.grape_server.global.exception.ErrorCode;
 import pro.grape_server.model.entity.enums.Provider;
 
 import java.net.URI;
@@ -43,7 +44,7 @@ public class KakaoOAuthProvider implements OAuthProvider {
                     .body(Map.class);
 
             if (response == null) {
-                throw new AuthException("Failed to get user info from Kakao");
+                throw new BusinessException(ErrorCode.KAKAO_USER_INFO_FAILED);
             }
 
             String providerUserId = String.valueOf(response.get("id"));
@@ -57,10 +58,10 @@ public class KakaoOAuthProvider implements OAuthProvider {
             String email = kakaoAccount != null ? (String) kakaoAccount.get("email") : null;
 
             return new OAuthUserInfo(providerUserId, name, email);
-        } catch (AuthException e) {
+        } catch (BusinessException e) {
             throw e;
         } catch (Exception e) {
-            throw new AuthException("Failed to authenticate with Kakao: " + e.getMessage());
+            throw new BusinessException(ErrorCode.KAKAO_AUTH_FAILED);
         }
     }
 }

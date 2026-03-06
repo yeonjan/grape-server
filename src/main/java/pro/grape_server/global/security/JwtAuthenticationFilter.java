@@ -14,7 +14,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import pro.grape_server.domain.auth.repository.UserRepository;
 import pro.grape_server.domain.auth.service.JwtService;
-import pro.grape_server.global.exception.AuthException;
+import pro.grape_server.global.exception.BusinessException;
+import pro.grape_server.global.exception.ErrorCode;
 import pro.grape_server.model.entity.User;
 
 import java.io.IOException;
@@ -41,7 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Long userId = jwtService.getUserIdFromToken(token);
 
                 User user = userRepository.findById(userId)
-                        .orElseThrow(() -> new AuthException("User not found"));
+                        .orElseThrow(() -> new BusinessException(ErrorCode.TOKEN_USER_NOT_FOUND));
 
                 CustomUserDetails userDetails = new CustomUserDetails(user);
 
@@ -55,8 +56,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-        } catch (AuthException e) {
-            request.setAttribute("auth_error", e.getMessage());
+        } catch (BusinessException e) {
+            request.setAttribute("auth_error", e.getErrorCode().name());
         }
 
         filterChain.doFilter(request, response);

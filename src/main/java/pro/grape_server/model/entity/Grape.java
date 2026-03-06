@@ -2,6 +2,8 @@ package pro.grape_server.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import pro.grape_server.global.exception.BusinessException;
+import pro.grape_server.global.exception.ErrorCode;
 import pro.grape_server.model.entity.enums.GrapeStatus;
 
 import java.time.LocalDate;
@@ -53,7 +55,7 @@ public class Grape {
 
     private static void validateTargetCount(int targetCount) {
         if (targetCount != 30 && targetCount != 50 && targetCount != 100) {
-            throw new IllegalArgumentException("허용되지 않은 targetCount");
+            throw new BusinessException(ErrorCode.INVALID_TARGET_COUNT);
         }
     }
 

@@ -1,7 +1,8 @@
 package pro.grape_server.domain.auth.service.provider;
 
 import org.springframework.stereotype.Component;
-import pro.grape_server.global.exception.AuthException;
+import pro.grape_server.global.exception.BusinessException;
+import pro.grape_server.global.exception.ErrorCode;
 import pro.grape_server.model.entity.enums.Provider;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class OAuthProviderFactory {
     public OAuthProvider getProvider(Provider provider) {
         OAuthProvider oAuthProvider = providers.get(provider);
         if (oAuthProvider == null) {
-            throw new AuthException("Unsupported OAuth provider: " + provider);
+            throw new BusinessException(ErrorCode.UNSUPPORTED_OAUTH_PROVIDER);
         }
         return oAuthProvider;
     }
@@ -32,7 +33,7 @@ public class OAuthProviderFactory {
             Provider provider = Provider.valueOf(providerName.toUpperCase());
             return getProvider(provider);
         } catch (IllegalArgumentException e) {
-            throw new AuthException("Unknown OAuth provider: " + providerName);
+            throw new BusinessException(ErrorCode.UNKNOWN_OAUTH_PROVIDER);
         }
     }
 }

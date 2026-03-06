@@ -8,7 +8,8 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import pro.grape_server.global.exception.AuthException;
+import pro.grape_server.global.exception.BusinessException;
+import pro.grape_server.global.exception.ErrorCode;
 
 import javax.crypto.SecretKey;
 import java.time.LocalDateTime;
@@ -62,9 +63,9 @@ public class JwtService {
             parseToken(token);
             return true;
         } catch (ExpiredJwtException e) {
-            throw new AuthException("Token has expired");
+            throw new BusinessException(ErrorCode.TOKEN_EXPIRED);
         } catch (JwtException e) {
-            throw new AuthException("Invalid token");
+            throw new BusinessException(ErrorCode.INVALID_TOKEN);
         }
     }
 

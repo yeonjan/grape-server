@@ -10,7 +10,8 @@ import pro.grape_server.domain.auth.service.provider.OAuthProvider;
 import pro.grape_server.domain.auth.service.provider.OAuthProviderFactory;
 import pro.grape_server.domain.auth.service.provider.OAuthUserInfo;
 import pro.grape_server.domain.grape.repository.GrapeRepository;
-import pro.grape_server.global.exception.AuthException;
+import pro.grape_server.global.exception.BusinessException;
+import pro.grape_server.global.exception.ErrorCode;
 import pro.grape_server.model.entity.Grape;
 import pro.grape_server.model.entity.RefreshToken;
 import pro.grape_server.model.entity.User;
@@ -32,7 +33,7 @@ public class AuthService {
 
     public LoginResponse guestSignUp(String deviceId) {
         if (userRepository.findByProviderAndProviderUserId(Provider.GUEST, deviceId).isPresent()) {
-            throw new AuthException("Already registered device");
+            throw new BusinessException(ErrorCode.DEVICE_ALREADY_REGISTERED);
         }
         User user = userRepository.save(User.createGuest(deviceId));
         return issueTokens(user);
@@ -40,7 +41,7 @@ public class AuthService {
 
     public LoginResponse guestLogin(String deviceId) {
         User user = userRepository.findByProviderAndProviderUserId(Provider.GUEST, deviceId)
-                .orElseThrow(() -> new AuthException("Guest user not found"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.GUEST_USER_NOT_FOUND));
         return issueTokens(user);
     }
 
@@ -54,7 +55,7 @@ public class AuthService {
         User user;
         if (guestUserId != null) {
             User guestUser = userRepository.findById(guestUserId)
-                    .orElseThrow(() -> new AuthException("Guest user not found"));
+                    .orElseThrow(() -> new BusinessException(ErrorCode.GUEST_USER_NOT_FOUND));
 
             if (existingSocialUser.isPresent()) {
                 User socialUser = existingSocialUser.get();
@@ -78,11 +79,11 @@ public class AuthService {
         jwtService.validateToken(refreshToken);
 
         RefreshToken storedToken = refreshTokenRepository.findByToken(refreshToken)
-                .orElseThrow(() -> new AuthException("Invalid refresh token"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN));
 
         if (storedToken.isExpired()) {
             refreshTokenRepository.delete(storedToken);
-            throw new AuthException("Refresh token has expired");
+            throw new BusinessException(ErrorCode.REFRESH_TOKEN_EXPIRED);
         }
 
         User user = storedToken.getUser();
