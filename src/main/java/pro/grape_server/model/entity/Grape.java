@@ -42,6 +42,11 @@ public class Grape {
         return Grape.builder().user(user).title(title).targetCount(targetCount).reward(reward).status(GrapeStatus.IN_PROGRESS).build();
     }
 
+    public void update(String title, String reward) {
+        this.title = title;
+        this.reward = reward;
+    }
+
     public void assignToUser(User newUser) {
         this.user = newUser;
     }

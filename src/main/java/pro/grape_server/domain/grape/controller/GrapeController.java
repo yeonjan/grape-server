@@ -8,6 +8,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import pro.grape_server.domain.grape.controller.dto.request.CreateRecordRequest;
 import pro.grape_server.domain.grape.controller.dto.request.CreateGrapeRequest;
+import pro.grape_server.domain.grape.controller.dto.request.UpdateGrapeRequest;
+import pro.grape_server.domain.grape.controller.dto.request.UpdateRecordRequest;
 import pro.grape_server.domain.grape.controller.dto.response.CheckGrapeExistsResponse;
 import pro.grape_server.domain.grape.controller.dto.response.CreateRecordResponse;
 import pro.grape_server.domain.grape.controller.dto.response.CreateGrapeResponse;
@@ -61,6 +63,16 @@ public class GrapeController {
         return ResponseEntity.ok(GetGrapeResponse.from(result));
     }
 
+    @PatchMapping("/record/{recordId}")
+    public ResponseEntity<Void> updateRecord(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long recordId,
+            @RequestBody UpdateRecordRequest request
+    ) {
+        recordService.update(userDetails.getUserId(), recordId, request.memo(), request.recordDate());
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/record")
     public ResponseEntity<GetRecordResponse> GetRecord(
             @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -68,6 +80,16 @@ public class GrapeController {
     ) {
         Record record = recordService.get(userDetails.getUserId(), recordId);
         return ResponseEntity.ok(GetRecordResponse.from(record));
+    }
+
+    @PatchMapping("/{grapeId}")
+    public ResponseEntity<Void> updateGrape(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long grapeId,
+            @RequestBody UpdateGrapeRequest request
+    ) {
+        grapeService.update(userDetails.getUserId(), grapeId, request.title(), request.reward());
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/exists")

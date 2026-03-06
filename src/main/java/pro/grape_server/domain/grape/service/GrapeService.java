@@ -56,6 +56,17 @@ public class GrapeService {
     }
 
 
+    public void update(Long userId, Long grapeId, String title, String reward) {
+        Grape grape = grapeRepository.findById(grapeId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포도입니다."));
+
+        if (!grape.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("본인의 포도만 수정할 수 있습니다.");
+        }
+
+        grape.update(title, reward);
+    }
+
     public boolean hasGrape(Long userId) {
         return grapeRepository.existsByUserId(userId);
     }

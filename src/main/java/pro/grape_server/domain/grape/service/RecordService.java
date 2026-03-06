@@ -36,6 +36,22 @@ public class RecordService {
         return record.getId();
     }
 
+    public void update(Long userId, Long recordId, String memo, LocalDate recordDate) {
+        Record record = recordRepository.findById(recordId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 기록입니다."));
+
+        if (!record.getGrape().getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("본인의 기록만 수정할 수 있습니다.");
+        }
+
+        if (!record.getRecordDate().equals(recordDate)
+                && recordRepository.existsByGrapeIdAndRecordDate(record.getGrape().getId(), recordDate)) {
+            throw new IllegalStateException("해당 날짜에 이미 기록이 존재합니다.");
+        }
+
+        record.update(memo, recordDate);
+    }
+
     public Record get(Long userId, Long recordId) {
         Record record = recordRepository.findById(recordId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 기록입니다."));

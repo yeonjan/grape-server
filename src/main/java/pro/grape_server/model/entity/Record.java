@@ -43,5 +43,10 @@ public class Record {
         return Record.builder().grape(grape).user(user).memo(memo).recordDate(recordDate).build();
     }
 
+    public void update(String memo, LocalDate recordDate) {
+        this.memo = memo;
+        this.recordDate = recordDate;
+    }
+
 
 }
