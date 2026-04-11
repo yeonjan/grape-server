@@ -20,6 +20,7 @@ public enum ErrorCode {
     RECORD_CREATE_DENIED(HttpStatus.FORBIDDEN, "본인의 포도에만 기록을 추가할 수 있습니다."),
     RECORD_UPDATE_DENIED(HttpStatus.FORBIDDEN, "본인의 기록만 수정할 수 있습니다."),
     RECORD_ACCESS_DENIED(HttpStatus.FORBIDDEN, "본인의 기록만 조회할 수 있습니다."),
+    RECORD_DELETE_DENIED(HttpStatus.FORBIDDEN, "본인의 기록만 삭제할 수 있습니다."),
     RECORD_DUPLICATE(HttpStatus.CONFLICT, "해당 날짜에 이미 기록이 존재합니다."),
 
     // Auth

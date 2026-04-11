@@ -73,6 +73,15 @@ public class GrapeController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/record/{recordId}")
+    public ResponseEntity<Void> deleteRecord(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long recordId
+    ) {
+        recordService.delete(userDetails.getUserId(), recordId);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/record")
     public ResponseEntity<GetRecordResponse> GetRecord(
             @AuthenticationPrincipal CustomUserDetails userDetails,

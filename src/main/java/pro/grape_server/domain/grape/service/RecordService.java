@@ -54,6 +54,17 @@ public class RecordService {
         record.update(memo, recordDate);
     }
 
+    public void delete(Long userId, Long recordId) {
+        Record record = recordRepository.findById(recordId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RECORD_NOT_FOUND));
+
+        if (!record.getGrape().getUser().getId().equals(userId)) {
+            throw new BusinessException(ErrorCode.RECORD_DELETE_DENIED);
+        }
+
+        recordRepository.delete(record);
+    }
+
     public Record get(Long userId, Long recordId) {
         Record record = recordRepository.findById(recordId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.RECORD_NOT_FOUND));
