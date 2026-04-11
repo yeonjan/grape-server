@@ -35,35 +35,25 @@ public class User extends BaseEntity {
     @Column(nullable = false, length = 100)
     private String providerUserId;
 
-    @Column(nullable = false, length = 50)
-    private String name;
-
-    @Column(length = 100)
-    private String email;
-
     @Column(length = 50)
     private String nickname;
 
     private LocalDateTime lastLoginAt;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private User(Provider provider, String providerUserId, String name, String email) {
+    private User(Provider provider, String providerUserId) {
         this.provider = provider;
         this.providerUserId = providerUserId;
-        this.name = name;
-        this.email = email;
     }
 
     public void updateLastLoginAt() {
         this.lastLoginAt = LocalDateTime.now();
     }
 
-    public static User create(Provider provider, String providerUserId, String name, String email) {
+    public static User create(Provider provider, String providerUserId) {
         return User.builder()
                 .provider(provider)
                 .providerUserId(providerUserId)
-                .name(name)
-                .email(email)
                 .build();
     }
 
@@ -71,7 +61,6 @@ public class User extends BaseEntity {
         return User.builder()
                 .provider(Provider.GUEST)
                 .providerUserId(deviceHash)
-                .name("Guest")
                 .build();
     }
 
@@ -79,10 +68,8 @@ public class User extends BaseEntity {
         return this.provider == Provider.GUEST;
     }
 
-    public void convertToSocialAccount(Provider provider, String providerUserId, String name, String email) {
+    public void convertToSocialAccount(Provider provider, String providerUserId) {
         this.provider = provider;
         this.providerUserId = providerUserId;
-        this.name = name;
-        this.email = email;
     }
 }

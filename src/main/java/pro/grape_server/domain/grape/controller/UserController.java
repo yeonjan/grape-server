@@ -15,11 +15,6 @@ import pro.grape_server.global.security.CustomUserDetails;
 @RequestMapping("/api/users")
 public class UserController {
 
-    @GetMapping("/me/email")
-    public ResponseEntity<GetUserEmailResponse> getUserEmail(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        String email = userDetails.getUser().getEmail();
-        return ResponseEntity.ok(GetUserEmailResponse.from(email));
-    }
 
     @GetMapping("/me/nickname")
     public ResponseEntity<GetUserNicknameResponse> getUserNickname(@AuthenticationPrincipal CustomUserDetails userDetails) {
