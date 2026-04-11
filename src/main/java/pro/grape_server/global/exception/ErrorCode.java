@@ -35,6 +35,7 @@ public enum ErrorCode {
     UNKNOWN_OAUTH_PROVIDER(HttpStatus.BAD_REQUEST, "Unknown OAuth provider"),
     KAKAO_USER_INFO_FAILED(HttpStatus.BAD_GATEWAY, "Failed to get user info from Kakao"),
     KAKAO_AUTH_FAILED(HttpStatus.BAD_GATEWAY, "Failed to authenticate with Kakao"),
+    APPLE_AUTH_FAILED(HttpStatus.BAD_GATEWAY, "Failed to authenticate with Apple"),
 
     // Not Implemented
     GOOGLE_OAUTH_NOT_IMPLEMENTED(HttpStatus.NOT_IMPLEMENTED, "Google OAuth is not implemented yet"),

@@ -65,7 +65,7 @@ public class AuthService {
                 userRepository.delete(guestUser);
                 user = socialUser;
             } else {
-                guestUser.convertToSocialAccount(provider, userInfo.providerUserId(), userInfo.name(), userInfo.email());
+                guestUser.convertToSocialAccount(provider, userInfo.providerUserId());
                 user = guestUser;
             }
         } else {
@@ -101,13 +101,7 @@ public class AuthService {
     }
 
     private User createUser(Provider provider, OAuthUserInfo userInfo) {
-        User newUser = User.create(
-                provider,
-                userInfo.providerUserId(),
-                userInfo.name(),
-                userInfo.email()
-        );
-        return userRepository.save(newUser);
+        return userRepository.save(User.create(provider, userInfo.providerUserId()));
     }
 
     private LoginResponse issueTokens(User user) {
