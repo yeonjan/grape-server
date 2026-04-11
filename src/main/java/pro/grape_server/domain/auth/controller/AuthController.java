@@ -48,7 +48,7 @@ public class AuthController {
                 guestUserId = userDetails.getUserId();
             }
         }
-        LoginResponse response = authService.login(provider, request.accessToken(), guestUserId);
+        LoginResponse response = authService.login(provider, request.token(), guestUserId);
         return ResponseEntity.ok(response);
     }
 
