@@ -25,6 +25,7 @@ services:
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
+      APPLE_BUNDLE_ID: ${APPLE_BUNDLE_ID}
     depends_on:
       cloud-sql-proxy:
         condition: service_healthy
