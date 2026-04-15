@@ -29,6 +29,10 @@ services:
     depends_on:
       cloud-sql-proxy:
         condition: service_healthy
+    build: .
+    volumes:
+      - ./logs:/logs
+
 
   nginx:
     image: nginx:latest
