@@ -45,7 +45,7 @@ public class GrapeService {
             throw new BusinessException(ErrorCode.GRAPE_ACCESS_DENIED);
         }
 
-        List<Record> records = recordRepository.findAllByGrapeId(grape.getId());
+        List<Record> records = recordRepository.findAllByGrapeIdOrderByRecordDateAsc(grape.getId());
         return GrapeOverviewResult.from(grape, records);
     }
 
@@ -53,7 +53,7 @@ public class GrapeService {
         Grape grape = grapeRepository.findByUserIdAndStatus(userId, GrapeStatus.IN_PROGRESS)
                 .orElseThrow(() -> new BusinessException(ErrorCode.GRAPE_IN_PROGRESS_NOT_FOUND));
 
-        List<Record> records = recordRepository.findAllByGrapeId(grape.getId());
+        List<Record> records = recordRepository.findAllByGrapeIdOrderByRecordDateAsc(grape.getId());
         return GrapeOverviewResult.from(grape, records);
     }
 

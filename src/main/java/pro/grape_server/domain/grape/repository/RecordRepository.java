@@ -9,5 +9,5 @@ import java.util.List;
 public interface RecordRepository extends JpaRepository<Record, Long> {
     boolean existsByGrapeIdAndRecordDate(Long grapeId, LocalDate recordDate);
 
-    List<Record> findAllByGrapeId(Long grapeId);
+    List<Record> findAllByGrapeIdOrderByRecordDateAsc(Long grapeId);
 }
