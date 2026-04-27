@@ -57,7 +57,7 @@ public class GrapeService {
         return GrapeOverviewResult.from(grape, records);
     }
 
-    public void update(Long userId, Long grapeId, String title, String reward) {
+    public void update(Long userId, Long grapeId, String title, String reward, int targetCount) {
         Grape grape = grapeRepository.findById(grapeId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.GRAPE_NOT_FOUND));
 
@@ -65,7 +65,7 @@ public class GrapeService {
             throw new BusinessException(ErrorCode.GRAPE_UPDATE_DENIED);
         }
 
-        grape.update(title, reward);
+        grape.update(title, reward, targetCount);
     }
 
     public boolean hasGrape(Long userId) {

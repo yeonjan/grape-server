@@ -97,7 +97,7 @@ public class GrapeController {
             @PathVariable Long grapeId,
             @RequestBody UpdateGrapeRequest request
     ) {
-        grapeService.update(userDetails.getUserId(), grapeId, request.title(), request.reward());
+        grapeService.update(userDetails.getUserId(), grapeId, request.title(), request.reward(), request.targetCount());
         return ResponseEntity.ok().build();
     }
 
