@@ -92,7 +92,9 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           username: deploy
           key: ${{ secrets.SSH_KEY }}
+          envs: GHCR_TOKEN
           script: |
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin 
             cd /home/deploy
             export IMAGE_TAG=${{ env.SHORT_SHA }}
             docker compose pull
