@@ -10,16 +10,14 @@ import pro.grape_server.domain.grape.controller.dto.request.CreateRecordRequest;
 import pro.grape_server.domain.grape.controller.dto.request.CreateGrapeRequest;
 import pro.grape_server.domain.grape.controller.dto.request.UpdateGrapeRequest;
 import pro.grape_server.domain.grape.controller.dto.request.UpdateRecordRequest;
-import pro.grape_server.domain.grape.controller.dto.response.CheckGrapeExistsResponse;
-import pro.grape_server.domain.grape.controller.dto.response.CreateRecordResponse;
-import pro.grape_server.domain.grape.controller.dto.response.CreateGrapeResponse;
-import pro.grape_server.domain.grape.controller.dto.response.GetRecordResponse;
-import pro.grape_server.domain.grape.controller.dto.response.GetGrapeResponse;
+import pro.grape_server.domain.grape.controller.dto.response.*;
 import pro.grape_server.domain.grape.service.RecordService;
 import pro.grape_server.domain.grape.service.GrapeService;
 import pro.grape_server.domain.grape.service.dto.GrapeOverviewResult;
 import pro.grape_server.global.security.CustomUserDetails;
 import pro.grape_server.model.entity.Record;
+
+import java.util.List;
 
 @RestController("rest")
 @RequiredArgsConstructor
@@ -107,5 +105,14 @@ public class GrapeController {
     ) {
         boolean exists = grapeService.hasGrape(userDetails.getUserId());
         return ResponseEntity.ok(new CheckGrapeExistsResponse(exists));
+    }
+
+    @GetMapping("/activityGrid")
+    public ResponseEntity<GetActivityGridResponse> getActivityGrid(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam int period
+    ) {
+        List<List<Integer>> activityGrid = grapeService.getActivityGrid(userDetails.getUserId(), period);
+        return ResponseEntity.ok(new GetActivityGridResponse(activityGrid));
     }
 }
