@@ -14,7 +14,11 @@ import pro.grape_server.model.entity.Record;
 import pro.grape_server.model.entity.User;
 import pro.grape_server.model.entity.enums.GrapeStatus;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -70,5 +74,34 @@ public class GrapeService {
 
     public boolean hasGrape(Long userId) {
         return grapeRepository.existsByUserId(userId);
+    }
+
+    public List<List<Integer>> getActivityGrid(Long userId, int weeks) {
+        LocalDate today = LocalDate.now();
+
+        // 오늘 기준 현재 주의 일요일 계산 (일=0, 월=1, ..., 토=6)
+        int daysFromSunday = today.getDayOfWeek().getValue() % 7; // ISO: 월=1..일=7 → 일=0
+        LocalDate currentWeekSunday = today.minusDays(daysFromSunday);
+
+        LocalDate startDate = currentWeekSunday.minusWeeks(weeks - 1);
+        LocalDate endDate = currentWeekSunday.plusDays(6);
+
+        Set<LocalDate> recordDates = new HashSet<>(
+                recordRepository.findRecordDatesByUserIdBetween(userId, startDate, endDate)
+        );
+
+        List<List<Integer>> grid = new ArrayList<>();
+        LocalDate cursor = startDate;
+
+        for (int w = 0; w < weeks; w++) {
+            List<Integer> week = new ArrayList<>();
+            for (int d = 0; d < 7; d++) {
+                week.add(recordDates.contains(cursor) ? 1 : 0);
+                cursor = cursor.plusDays(1);
+            }
+            grid.add(week);
+        }
+
+        return grid;
     }
 }
