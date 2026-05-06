@@ -99,4 +99,5 @@ jobs:
             export IMAGE_TAG=${{ env.SHORT_SHA }}
             docker compose pull
             docker compose up -d --remove-orphans
- 
+        env:
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
