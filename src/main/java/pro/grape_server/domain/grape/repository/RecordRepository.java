@@ -13,6 +13,8 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
 
     List<Record> findAllByGrapeIdOrderByRecordDateAsc(Long grapeId);
 
+    long countByGrapeId(Long grapeId);
+
     @Query("SELECT r.recordDate FROM Record r WHERE r.user.id = :userId AND r.recordDate BETWEEN :start AND :end")
     List<LocalDate> findRecordDatesByUserIdBetween(@Param("userId") Long userId, @Param("start") LocalDate start, @Param("end") LocalDate end);
 }

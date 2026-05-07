@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import pro.grape_server.domain.auth.repository.UserRepository;
 import pro.grape_server.domain.grape.repository.RecordRepository;
 import pro.grape_server.domain.grape.repository.GrapeRepository;
+import pro.grape_server.domain.grape.service.dto.GrapeInfoResult;
 import pro.grape_server.domain.grape.service.dto.GrapeOverviewResult;
 import pro.grape_server.global.exception.BusinessException;
 import pro.grape_server.global.exception.ErrorCode;
@@ -70,6 +71,14 @@ public class GrapeService {
         }
 
         grape.update(title, reward, targetCount);
+    }
+
+    public GrapeInfoResult getInProgressGrapeInfo(Long userId) {
+        Grape grape = grapeRepository.findByUserIdAndStatus(userId, GrapeStatus.IN_PROGRESS)
+                .orElseThrow(() -> new BusinessException(ErrorCode.GRAPE_IN_PROGRESS_NOT_FOUND));
+
+        int recordCount = (int) recordRepository.countByGrapeId(grape.getId());
+        return GrapeInfoResult.from(grape, recordCount);
     }
 
     public boolean hasGrape(Long userId) {

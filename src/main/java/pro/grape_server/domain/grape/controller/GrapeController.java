@@ -13,6 +13,7 @@ import pro.grape_server.domain.grape.controller.dto.request.UpdateRecordRequest;
 import pro.grape_server.domain.grape.controller.dto.response.*;
 import pro.grape_server.domain.grape.service.RecordService;
 import pro.grape_server.domain.grape.service.GrapeService;
+import pro.grape_server.domain.grape.service.dto.GrapeInfoResult;
 import pro.grape_server.domain.grape.service.dto.GrapeOverviewResult;
 import pro.grape_server.global.security.CustomUserDetails;
 import pro.grape_server.model.entity.Record;
@@ -99,6 +100,14 @@ public class GrapeController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/in-progress")
+    public ResponseEntity<GetInProgressGrapeResponse> getInProgressGrapeInfo(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        GrapeInfoResult result = grapeService.getInProgressGrapeInfo(userDetails.getUserId());
+        return ResponseEntity.ok(GetInProgressGrapeResponse.from(result));
+    }
+
     @GetMapping("/exists")
     public ResponseEntity<CheckGrapeExistsResponse> checkGrapeExists(
             @AuthenticationPrincipal CustomUserDetails userDetails
@@ -115,4 +124,5 @@ public class GrapeController {
         List<List<Integer>> activityGrid = grapeService.getActivityGrid(userDetails.getUserId(), period);
         return ResponseEntity.ok(new GetActivityGridResponse(activityGrid));
     }
+
 }
